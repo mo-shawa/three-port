@@ -49,7 +49,7 @@ container.appendChild(renderer.domElement)
 /////////
 
 const camera = new THREE.PerspectiveCamera(40, size.width / size.height, 0.1, 100);
-camera.position.set(0, 1, 2);
+camera.position.set(0, 1, 5);
 let cameraTarget = new THREE.Vector3(0, 1, 0)
 
 scene.add(camera)
@@ -83,7 +83,11 @@ scene.add(floor)
 /////////
 
 const toLoad = [
-    { file: 'https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/duck/model.gltf', name: 'duck' },
+    {
+        file: 'https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/duck/model.gltf',
+        name: 'duck',
+        group: new THREE.Group()
+    },
     // { file: 'https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/witch/model.gltf', name: 'witch' },
     // { file: './assets/ruby.gltf', name: 'ruby' },
     // { file: 'https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/models/les-paul/model.gltf', name: 'les-paul' },
@@ -93,6 +97,12 @@ const LoadingManager = new THREE.LoadingManager(() => { })
 const gltfLoader = new GLTFLoader(LoadingManager)
 toLoad.forEach(item => {
     gltfLoader.load(item.file, (model) => {
+        model.scene.traverse(child => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        })
         scene.add(model.scene)
     })
 })
