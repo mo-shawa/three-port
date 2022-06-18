@@ -96,8 +96,49 @@ const toLoad = [
 
 const models = {}
 
-const LoadingManager = new THREE.LoadingManager(() => { })
+const setupAnimations = () => {
+    console.log('setupAnimations')
+    models.duck.position.x = 1
+    models.duck.position.y = 1
+    models.duck.position.z = 1
+
+    // Basically css media queries for gsap
+    ScrollTrigger.matchMedia({ "(prefers-reduced-motion: no-preference )": desktopAnimation })
+}
+
+// Desktop animation
+const desktopAnimation = () => {
+    console.log('desktopAnimation')
+    let section = 0
+    const timeline = gsap.timeline({
+        defaults: {
+            duration: 1,
+            ease: "power2.inOut"
+        },
+        scrollTrigger: {
+            // css selector of the element to trigger on
+            trigger: "#page",
+            // start the animation when the element is in the viewport for the first time
+            start: "top top",
+            // end the animation when the element is out of the viewport
+            end: "bottom bottom",
+
+            scrub: .1,
+        }
+
+    })
+    timeline.to(models.duck.position, { x: 0, y: 0, z: 0 }, section)
+}
+
+
+
+const LoadingManager = new THREE.LoadingManager(() => {
+    console.log("loading manager")
+    setupAnimations()
+})
+
 const gltfLoader = new GLTFLoader(LoadingManager)
+
 toLoad.forEach(item => {
     gltfLoader.load(item.file, (model) => {
         model.scene.traverse(child => {
@@ -132,7 +173,9 @@ resizeHandler()
 // Tick
 ///////
 
+
 const tick = () => {
+
     camera.lookAt(cameraTarget)
     renderer.render(scene, camera)
     window.requestAnimationFrame(() => tick())
