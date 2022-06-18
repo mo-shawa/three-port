@@ -13,6 +13,7 @@ console.log(GLTFLoader)
 const COLORS = {
     background: "white",
     light: "#ffffff",
+    // sky: "#aaaaff",
     sky: "#aaaaff",
     ground: "#88ff88"
 }
@@ -93,6 +94,8 @@ const toLoad = [
     // { file: 'https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/models/les-paul/model.gltf', name: 'les-paul' },
 ]
 
+const models = {}
+
 const LoadingManager = new THREE.LoadingManager(() => { })
 const gltfLoader = new GLTFLoader(LoadingManager)
 toLoad.forEach(item => {
@@ -103,7 +106,9 @@ toLoad.forEach(item => {
                 child.receiveShadow = true;
             }
         })
-        scene.add(model.scene)
+        item.group.add(model.scene)
+        scene.add(item.group)
+        models[item.name] = item.group
     })
 })
 
